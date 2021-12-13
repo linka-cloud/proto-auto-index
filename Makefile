@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-MODULE = go.linka.cloud/wirego
+MODULE = go.linka.cloud/protoautoindex
 
 
 PROTO_BASE_PATH = $(PWD)
@@ -90,14 +90,3 @@ lint:
 .PHONY: tests
 tests: proto
 	@go test -v ./...
-
-DOCKER_DEBUG_IMAGE := wgodebug
-
-.PHONY: docker-debug
-docker-debug:
-	@docker image build -t $(DOCKER_DEBUG_IMAGE) -f scripts/debug.Dockerfile scripts
-
-.PHONY: docker-tests
-docker-tests: docker-debug
-	@docker run --rm -i -t -v $(PWD):/wgo -w /wgo --cap-add NET_ADMIN $(DOCKER_DEBUG_IMAGE) \
-		bash -c "go mod download &> /dev/null && go test -v ./..."
