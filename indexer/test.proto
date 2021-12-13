@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package protoautoindex.test;
+
+
+import "file/not/found.proto";
+
+message Test {
+  // comment here
+  string one = 18;
+  int32 two = 21;
+  // comment here too...
+  map<string,string> three = 43;
+  repeated uint32 four = 41;
+  // we could use a better name...
+  oneof oneof {
+    // there too
+    string five = 53;
+    string six = 16;
+  }
+  message Sub {
+    string one = 109;
+    int32 two = 42;
+    map<string,string> three = 13;
+    repeated uint32 four = 3;
+    oneof oneof {
+      // there too
+      string five = 2;
+      string six = 11;
+    }
+  }
+  Sub seven = 33;
+}
