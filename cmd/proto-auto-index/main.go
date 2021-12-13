@@ -19,14 +19,14 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.linka.cloud/protoautoindex/indexer"
+	"go.linka.cloud/protoautoindex"
 )
 
 var cmd = cobra.Command{
 	Use:  "proto-auto-index [file]",
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		i := indexer.New()
+		i := protoautoindex.New()
 		if err := i.Parse(args[0]); err != nil {
 			return err
 		}
