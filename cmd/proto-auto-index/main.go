@@ -16,32 +16,46 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/spf13/cobra"
 
 	"go.linka.cloud/protoautoindex"
 )
 
-var cmd = cobra.Command{
-	Use:  "proto-auto-index [file]",
-	Args: cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		i := protoautoindex.New()
-		if err := i.Parse(args[0]); err != nil {
-			return err
-		}
-		if err := i.SetIndexes(); err != nil {
-			return err
-		}
-		if err := i.Write(args[0]); err != nil {
-			return err
-		}
-		return nil
-	},
-}
+var (
+	version     = "dev"
+	showVersion bool
+	cmd         = cobra.Command{
+		Use:  "proto-auto-index [file]",
+		Args: cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if showVersion {
+				fmt.Println(version)
+				return nil
+			}
+			if len(args) == 0 {
+				return errors.New("no file specified")
+			}
+			i := protoautoindex.New()
+			if err := i.Parse(args[0]); err != nil {
+				return err
+			}
+			if err := i.SetIndexes(); err != nil {
+				return err
+			}
+			if err := i.Write(args[0]); err != nil {
+				return err
+			}
+			return nil
+		},
+	}
+)
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	cmd.Flags().BoolVarP(&showVersion, "version", "v", false, "display build version")
 	cmd.ExecuteContext(ctx)
 }
