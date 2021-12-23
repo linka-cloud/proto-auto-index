@@ -18,6 +18,8 @@ message Test {
     string five = 53;
     string six = 16;
   }
+  // seven is reserved
+  reserved 100;
   message Sub {
     string one = 109;
     int32 two = 42;
@@ -29,5 +31,6 @@ message Test {
       string six = 11;
     }
   }
-  Sub seven = 33;
+  Sub height = 33;
+  reserved 98 to 100;
 }

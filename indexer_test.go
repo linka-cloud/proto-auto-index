@@ -41,6 +41,8 @@ message Test {
     string five = 5;
     string six = 6;
   }
+  // seven is reserved
+  reserved 7;
   message Sub {
     string one = 1;
     int32 two = 2;
@@ -52,7 +54,8 @@ message Test {
       string six = 6;
     }
   }
-  Sub seven = 7;
+  Sub height = 8;
+  reserved 9 to 11;
 }
 `
 

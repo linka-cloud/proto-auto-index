@@ -110,5 +110,50 @@ func setIndex(v ast.Node, index *int) {
 		for _, v := range n.MessageBody.Decls {
 			setIndex(v, &index2)
 		}
+	case *ast.ReservedNode:
+		for _, v := range n.Ranges {
+			uiln, ok := v.StartVal.(*ast.UintLiteralNode)
+			if !ok {
+				continue
+			}
+			*index++
+			oldStart, _ := v.StartVal.AsInt64()
+			sv := v.StartVal
+			v.StartVal = ast.NewUintLiteralNode(uint64(*index), ast.TokenInfo{
+				PosRange:          ast.PosRange{Start: *uiln.Start(), End: *uiln.End()},
+				RawText:           strconv.Itoa(*index),
+				LeadingComments:   uiln.LeadingComments(),
+				TrailingComments:  uiln.TrailingComments(),
+				LeadingWhitespace: uiln.LeadingWhitespace(),
+			})
+			for ii := range v.Children() {
+				if v.Children()[ii] == sv {
+					v.Children()[ii] = v.StartVal
+				}
+			}
+			v.StartVal.(*ast.UintLiteralNode).Val = uint64(*index)
+			if v.EndVal == nil {
+				continue
+			}
+			uiln, ok = v.EndVal.(*ast.UintLiteralNode)
+			if !ok {
+				continue
+			}
+			e, _ := v.EndVal.AsInt64()
+			*index += int(e - oldStart)
+			ev := v.EndVal
+			v.EndVal = ast.NewUintLiteralNode(uint64(*index), ast.TokenInfo{
+				PosRange:          ast.PosRange{Start: *uiln.Start(), End: *uiln.End()},
+				RawText:           strconv.Itoa(*index),
+				LeadingComments:   uiln.LeadingComments(),
+				TrailingComments:  uiln.TrailingComments(),
+				LeadingWhitespace: uiln.LeadingWhitespace(),
+			})
+			for ii := range v.Children() {
+				if v.Children()[ii] == ev {
+					v.Children()[ii] = v.EndVal
+				}
+			}
+		}
 	}
 }
